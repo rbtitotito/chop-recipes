@@ -1,0 +1,6 @@
+{
+  "name": "Chop-Recipes",
+  "description": "A PHP microservice that makes use of the Silex web framework.",
+  "repository": "https://github.com/rbtitotito/chop-recipes",
+  "addons": []
+}
