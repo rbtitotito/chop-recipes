@@ -5,25 +5,36 @@ require(__DIR__.'/../../vendor/autoload.php');
 class RecipesTest extends PHPUnit_Framework_TestCase
 {
   protected $client;
+  protected $base_uri;
 
   protected function setUp()
   {
+    $this->base_uri = $base_uri = 'http://localhost:8080';
     $this->client = new GuzzleHttp\Client([
-      'base_url' => 'http://localhost:8080',
-      'defaults' => ['exceptions' => false]
+      'base_uri' => $base_uri,
+      'http_errors' => false
       ]);
+  }
+
+  public function testGet_ValidInput_RecipeList()
+  {
+    $response = $this->client->get($this->base_uri);
+    $this->assertEquals(200, $response->getStatusCode());
+    $this->assertEquals('application/json', $response->getHeader('Content-Type')[0]);
+    $data = json_decode( $response->getBody(), true );
+    // var_dump( $data );
+    $this->assertArrayHasKey('00001', $data);
+    $this->assertArrayHasKey('steps', $data['00001']);
+    $this->assertArrayHasKey('name', $data['00001']);
   }
 
   public function testGet_ValidInput_RecipeObject()
   {
-    $response = $this->client->get('/', [
-      'query' => [
-        'recipe_id' => '0001'
-        ]
-      ]);
+    $response = $this->client->get('/00001');
     $this->assertEquals(200, $response->getStatusCode());
 
-    $data = $response->json();
+    $data = json_decode( $response->getBody(), true );
+    // var_dump($data);
     $this->assertArrayHasKey('recipe_id', $data);
     $this->assertArrayHasKey('steps', $data);
     $this->assertArrayHasKey('name', $data);
@@ -46,15 +57,21 @@ class RecipesTest extends PHPUnit_Framework_TestCase
             ]
           ]
       ]);
-    $this->assertEquals(200, $response->getStatusCode());
+    $this->assertEquals(201, $response->getStatusCode());
 
-    $data = $response->json();
+    $data = json_decode($response->getBody(), true);
     $this->assertEquals($recipe_id, $data['recipe_id']);
+  }
+
+  public function testDelete_Ok()
+  {
+    $response = $this->client->delete('/00002');
+    $this->assertEquals(200, $response->getStatusCode());
   }
 
   public function testDelete_Error()
   {
-    $response = $this->client->delete('/random-book');
-    $this->assertEquals(405, $response->getStatusCode());
+    $response = $this->client->delete('/random-book', ['http-errors' => false]);
+    $this->assertEquals(404, $response->getStatusCode());
   }
 }
