@@ -1,11 +1,15 @@
 <?php
 
-require('../vendor/autoload.php');
+require( __DIR__.'/../vendor/autoload.php');
 
-$app = new Silex\Application();
+use Silex\Application;
+use Silex\Provider\MonologServiceProvider;
+
+$app = new Application();
 
 // set to false in prodution environment
 $app['debug'] = true;
+
 // Simple data store for RAD
 $recipes = array(
   '00001' => array(
@@ -19,7 +23,7 @@ $recipes = array(
     )
   ),
   '00002' => array(
-    'name' => 'Whipped Cream'
+    'name' => 'Whipped Cream',
     'steps' => array(
       '1' => 'Get out Mixer',
       '2' => 'Put in Cream, Sugar and Vanilla',
@@ -30,23 +34,19 @@ $recipes = array(
 );
 
 // Register the monolog logging service
-$app->register(new Silex\Provider\MonologServiceProvider(), array(
+$app->register(new MonologServiceProvider(), array(
   'monolog.logfile' => 'php://stderr',
 ));
 
-// // Register view rendering
-// $app->register(new Silex\Provider\TwigServiceProvider(), array(
-//     'twig.path' => __DIR__.'/views',
-// ));
-
 // Our web handlers
 // Return json_encoded recipes as default
-$app->get('/', function() use($app, $toys) {
+$app->get('/', function() use($app, $recipes) {
   $app['monolog']->addDebug('logging output.');
   return json_encode($recipes);
 });
-//return this recipe
-$app->get('/{recipe_id}', function(Silex\Application $app,
+
+//return this recipes details
+$app->get('/{recipe_id}', function(Application $app,
  $recipe_id) use($recipes) {
   $app['monolog']->addDebug('logging output.');
   if( !isset( $recipes[$recipe_id]))
