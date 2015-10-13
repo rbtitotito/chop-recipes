@@ -9,7 +9,7 @@ composer.phar
 /resources/cache/*
 /resources/log/*
 !resources/cache/.gitkeep
-!resources/logs/.gitkeep
+!resources/log/.gitkeep
 
 # Mac Stuff
 .DS_Store
