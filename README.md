@@ -1,5 +1,7 @@
 # Chop Recipes
 
+[![Build Status](https://travis-ci.org/rbtitotito/chop-recipes.svg)](https://travis-ci.org/rbtitotito/chop-recipes)
+
 A barebones PHP microservice that makes use of the [Silex](http://silex.sensiolabs.org/) web framework, which can easily be deployed to Heroku.
 
 ## Deploying
