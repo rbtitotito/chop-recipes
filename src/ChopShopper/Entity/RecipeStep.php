@@ -15,13 +15,21 @@ use \Doctrine\Common\Collections\ArrayCollection;
  class RecipeStep {
 
    /**
+    * @var id
+    *
     * @Id @Column(type="integer")
-    * @GeneratedValue
+    * @GeneratedValue(strategy="AUTO")
     */
     private $id;
 
-    /** @Column(length=400) */
-    private $direction;
+    /**
+     * @var string
+     *
+     * The text direction for this particular step.
+     * Should include all direction necessary to use attached ingredients.
+     * @Column(length=400)
+     */
+    private $directions;
 
     /**
      * @var \ChopShopper\Entity\Recipe

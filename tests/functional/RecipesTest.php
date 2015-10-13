@@ -66,14 +66,14 @@ class RecipesTest extends PHPUnit_Framework_TestCase
     $this->recipe_id = uniqid();
     $params = array();
     $params['name'] = $this->recipe_id;
-        //   'steps'    => [
-        //       [
-        //         'directions' => 'Direction Text 1'
-        //       ],
-        //       [
-        //         'directions' => 'Direction Text 2'
-        //       ],
-        //     ]
+    $params['steps'] = [
+            [
+                'directions' => 'Mix the eggs and the bacon',
+            ],
+            [
+                'directions' => 'Mix the butter with the buiscit',
+            ],
+        ];
     $response = $this->client->post($this->base_uri, [
         'form_params' => $params
       ]);
@@ -86,6 +86,7 @@ class RecipesTest extends PHPUnit_Framework_TestCase
     $this->assertEquals(201, $response->getStatusCode());
     $data = json_decode($response->getBody(), true);
     $this->assertArrayHasKey('name', $data);
+    $this->assertArrayHasKey('steps',$data);
   }
 
   private function findRecipeByName($name)
@@ -106,7 +107,7 @@ class RecipesTest extends PHPUnit_Framework_TestCase
 
   public function testDelete_Error()
   {
-    $response = $this->client->delete('/random-book', ['http-errors' => false]);
+    $response = $this->client->delete('/-11234', ['http-errors' => false]);
     $this->assertEquals(404, $response->getStatusCode());
   }
 }

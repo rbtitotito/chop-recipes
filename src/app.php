@@ -18,6 +18,7 @@ $app->register(new MonologServiceProvider(), array(
     'monolog.level'   => 100 // = Logger::DEBUG
 ));
 
+$app['monolog']->addDebug("db_options: ".var_export($db_options, true));
 // this picks up $app['db.options'] from config
 $app->register(new Silex\Provider\DoctrineServiceProvider());
 // Register Doctrine ORM

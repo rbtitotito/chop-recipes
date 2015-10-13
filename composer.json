@@ -23,5 +23,8 @@
   },
   "autoload": {
     "psr-4": {"ChopShopper\\Entity\\": "src/ChopShopper/Entity"}
-  }
+},
+"scripts": {
+    "test": "phpunit"
+}
 }

@@ -1,8 +1,6 @@
 <?php
 
 $app['debug'] = true;
-
-$app['db.options'] = array(
-    'driver'   => 'pdo_sqlite',
-    'memory'   => true
-);
+if (isset($app['db.options']['dbname'])) {
+    $db_options['dbname'] = $db_options['dbname'].'_test';
+}
