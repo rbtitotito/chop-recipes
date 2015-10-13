@@ -2,6 +2,10 @@
 /**
   * Register Service Providers
   */
+use Doctrine\Common\Cache\ApcCache;
+use Doctrine\Common\Cache\ArrayCache;
+use Dflydev\Silex\Provider\DoctrineOrm\DoctrineOrmServiceProvider;
+use Silex\Provider\TwigServiceProvider;
 use Silex\Provider\HttpCacheServiceProvider;
 use Silex\Provider\MonologServiceProvider;
 
@@ -14,41 +18,30 @@ $app->register(new MonologServiceProvider(), array(
     'monolog.level'   => 300 // = Logger::WARNING
 ));
 
+// this picks up $app['db.options'] from config
 $app->register(new Silex\Provider\DoctrineServiceProvider());
-
-// $dbopts = parse_url(getenv('DATABASE_URL'));
-// $app->register(new Herrera\Pdo\PdoServiceProvider(),
-//   array(
-//     'pdo.dsn' => 'pgsql:dbname='.ltrim($dbopts['path'],'/').'host='.$dbopts['host'],
-//     'pdo.port' => $dbopts['port'],
-//     'pdo.username' => $dbopts["user"],
-//     'pdo.password' => $dbopts["pass"]
-//   )
-// );
-
-// Simple data store for RAD
-$recipes = array(
-  '00001' => array(
-    'recipe_id' => '00001',
-    'name' => 'Arroz con Pollo',
-    'steps' => array(
-      '1' => 'Prep Ingredients',
-      '2' => 'Turn on Stove',
-      '3' => 'Cook Rice',
-      '4' => 'Roast Chicken',
-      '5' => 'Combine and season'
-    )
-  ),
-  '00002' => array(
-    'recipe_id' => '00002',
-    'name' => 'Whipped Cream',
-    'steps' => array(
-      '1' => 'Get out Mixer',
-      '2' => 'Put in Cream, Sugar and Vanilla',
-      '3' => 'Mix until stiff peaks',
-      '4' => 'Chill for 10 minutes'
+// Register Doctrine ORM
+$app->register(new DoctrineORMServiceProvider(), array(
+  'orm.proxies_dir' => __DIR__.'/../resources/cache/doctrine/Proxy',
+  'orm.proxies_namespace'     => 'DoctrineProxy',
+  'orm.auto_generate_proxies' => true,
+  'orm.em.options' => array(
+    'mappings' => array(
+      array(
+        'type' => 'annotation',
+        'namespace' => 'ChopShopper\Entity',
+        'path' => __DIR__.'/ChopShopper/Entity'
+      )
     )
   )
-);
+));
+$app->register(new TwigServiceProvider(), array(
+    'twig.options'        => array(
+        'cache'            => isset($app['twig.options.cache']) ? $app['twig.options.cache'] : false,
+        'strict_variables' => true
+    ),
+    // 'twig.form.templates' => array('form_div_layout.html.twig', 'common/form_div_layout.html.twig'),
+    'twig.path'           => array(__DIR__ . '/../resources/views')
+));
 
 return $app;

@@ -10,10 +10,8 @@ $app['cache.path'] = __DIR__ . '/../cache';
 $app['http_cache.cache_dir'] = $app['cache.path'] . '/http';
 
 // Doctrine (db)
+// Use Sqlite for RAD
 $app['db.options'] = array(
-    'driver'   => 'pdo_mysql',
-    'host'     => 'localhost',
-    'dbname'   => 'chop_shopper',
-    'user'     => 'root',
-    'password' => '',
+    'driver'   => 'pdo_sqlite',
+    'path'     => __DIR__.'/app.db',
 );

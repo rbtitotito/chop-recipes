@@ -19,3 +19,8 @@ $ heroku open
 For more information about using PHP on Heroku, see these Dev Center articles:
 
 - [PHP on Heroku](https://devcenter.heroku.com/categories/php)
+
+## Credit
+
+Shamlessly Based on lyrixx excellent
+- [Silex-Kitchen-Edition](http://lyrixx.github.com/Silex-Kitchen-Edition).

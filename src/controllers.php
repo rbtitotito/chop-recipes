@@ -1,47 +1,86 @@
 <?php
 
+use ChopShopper\Entity\Recipe;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+
 // Our web handlers
 // Return json_encoded recipes as default
-$app->get('/', function() use($app, $recipes) {
+
+$app->get('/', function() use($app)
+{
   $app['monolog']->addDebug('logging output.');
+  $em = $app['orm.em'];
+  $recipes = $em->getRepository('ChopShopper\Entity\Recipe')
+                ->createQueryBuilder('r')
+                ->select('r')
+                ->getQuery()
+                ->getResult(\Doctrine\ORM\Query::HYDRATE_ARRAY);
   return $app->json($recipes, 200);
 });
 
-$app->post('/', function(Silex\Application $app, Request $request) use($recipes) {
+$app->post('/', function(Silex\Application $app, Request $request)
+{
   $app['monolog']->addDebug('logging output.');
-  $id = $request->get('recipe_id');
   $name = $request->get('name');
-  $recipes[ $id ] = array( 'recipe_id' => $id, 'name' => $name );
-  return $app->json( $recipes[$id], 201);
+  $em = $app['orm.em'];
+  $recipe = false;
+
+  $recipe = new Recipe();
+
+  if (!$recipe) {
+    $recipe->setName($name);
+    $em->persist($recipe);
+    $em->flush();
+  }
+
+  return $app->json( $recipe->toArray(), 201);
 });
 
 //return this recipes details
-$app->get('/{recipe_id}', function(Silex\Application $app, $recipe_id) use($recipes) {
+$app->get('/{recipe_id}', function(Silex\Application $app, $recipe_id)
+{
   $app['monolog']->addDebug('logging output.');
-  if( !isset( $recipes[$recipe_id]))
-  {
-   return $app->abort(404, "Recipe id {$recipe_id} does not exist.");
+  $em = $app['orm.em'];
+  $recipe = $em->getRepository('ChopShopper\Entity\Recipe')->find($recipe_id);
+
+  if (!$recipe) {
+    $app->abort(404, "Recipe id {$recipe_id} does not exist.");
   }
-  else {
-    return $app->json($recipes[$recipe_id],200);
-  }
+
+  return $app->json($recipe->toArray(),200);
 });
 
-$app->delete('/{recipe_id}', function(Silex\Application $app, $recipe_id) use(&$recipes) {
-    $app['monolog']->addDebug('logging output.');
-    echo "***\n\n {$recipe_id} \n\n";
-    if(!isset($recipes[$recipe_id]))
-    {
-      return $app->abort(404, "Recipe id {$recipe_id} does not exist.");
-    }
-    else {
-      $deleted = $recipes[$recipe_id];
-      unset($recipes[$recipe_id]);
-      $deleted['deleted'] = true;
-      return $app->json($deleted, 200);
-    }
-  });
+$app->delete('/{recipe_id}', function(Silex\Application $app, $recipe_id)
+{
+  $app['monolog']->addDebug('logging output.');
+  $em = $app['orm.em'];
+  $recipe = $em->getRepository('ChopShopper\Entity\Recipe')->find($recipe_id);
+
+  if (!$recipe) {
+    $app->abort(404, "Recipe id {$recipe_id} does not exist.");
+  }
+
+  $em->remove($recipe);
+  $em->flush();
+
+  // set deleted flag for http code compliance (imho)
+  $recipe->setDeleted(true);
+
+  return $app->json($recipe->toArray(), 200);
+});
+
+$app->error(function (\Exception $e, $code) use ($app)
+{
+  switch ($code) {
+      case 404:
+          $message = 'The requested page could not be found.';
+          break;
+      default:
+          $message = 'We are sorry, but something went terribly wrong.';
+  }
+
+  return new Response($message, $code);
+});
 
 return $app;
