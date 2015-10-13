@@ -14,12 +14,14 @@ class RecipesTest extends PHPUnit_Framework_TestCase
     $this->client = new GuzzleHttp\Client([
       'base_uri' => $base_uri,
       'http_errors' => false,
-      'stream' => false
+      'sync' => true
       ]);
   }
 
   public function testGet_ValidInput_RecipeList()
   {
+      // create some random objects to test
+      // this should be seeded in fixutres
     $this->createNewRecipeHelper();
     $this->createNewRecipeHelper();
     $this->createNewRecipeHelper();
@@ -27,41 +29,53 @@ class RecipesTest extends PHPUnit_Framework_TestCase
     $response = $this->client->get($this->base_uri);
     $this->assertEquals(200, $response->getStatusCode());
     $this->assertEquals('application/json', $response->getHeader('Content-Type')[0]);
-    $data = $response->getBody();
-    var_dump($data);
-    $this->assertArrayHasKey($this->_recipe_id, $data);
-    // $this->assertArrayHasKey('steps', $data['00001']);
-    // $this->assertArrayHasKey('name', $data['00001']);
+    $body = $response->getBody();
+    $data = json_decode($body, true);
+    $last_item = $data[sizeof($data)-1];
+    $this->assertArrayHasKey('name', $last_item);
+
+    // Search for last known recipe id somewhwere in list
+    // $found = false;
+    // foreach ($data as $item) {
+    //     echo $item['name'];
+    //     if ($item['name'] == $this->recipe_id) {
+    //         $found = true;
+    //     }
+    // }
+    // $this->assertTrue($found);
   }
 
   public function testGet_ValidInput_RecipeObject()
   {
-    $this->createNewRecipeHelper();
-    $response = $this->client->get($this->_recipe_id);
+    $new_response = $this->createNewRecipeHelper();
+    $new_recipe = json_decode( $new_response->getBody(), true );
+    $response = $this->client->get('/'.$new_recipe['recipe_id']);
     $this->assertEquals(200, $response->getStatusCode());
     $data = json_decode( $response->getBody(), true );
     $this->assertArrayHasKey('recipe_id', $data);
-    $this->assertArrayHasKey('steps', $data);
     $this->assertArrayHasKey('name', $data);
   }
 
+  /**
+   * Helper function to create new
+   * Recpie object via post
+   * with pseudo random id
+   */
   private function createNewRecipeHelper()
   {
-    $this->_recipe_id = uniqid();
-
-    $response = $this->client->post('/', [
-        'form_params' => [
-          'recipe_id' => $this->_recipe_id,
-          'name'     => $this->_recipe_id,
-          'steps'    => [
-              [
-                'directions' => 'Direction Text 1'
-              ],
-              [
-                'directions' => 'Direction Text 2'
-              ],
-            ]
-          ]
+    $this->recipe_id = uniqid();
+    $params = array();
+    $params['name'] = $this->recipe_id;
+        //   'steps'    => [
+        //       [
+        //         'directions' => 'Direction Text 1'
+        //       ],
+        //       [
+        //         'directions' => 'Direction Text 2'
+        //       ],
+        //     ]
+    $response = $this->client->post($this->base_uri, [
+        'form_params' => $params
       ]);
     return $response;
   }
@@ -71,12 +85,22 @@ class RecipesTest extends PHPUnit_Framework_TestCase
     $response = $this->createNewRecipeHelper();
     $this->assertEquals(201, $response->getStatusCode());
     $data = json_decode($response->getBody(), true);
+    $this->assertArrayHasKey('name', $data);
+  }
+
+  private function findRecipeByName($name)
+  {
+      $response = $this->client->get('/search/'.urlencode($name));
+      $body = $response->getBody();
+      $data = json_decode($body, true);
+      return $data;
   }
 
   public function testDelete_Ok()
   {
     $this->createNewRecipeHelper();
-    $response = $this->client->delete('/'.$this->_recipe_id);
+    $recipe = $this->findRecipeByName($this->recipe_id);
+    $response = $this->client->delete('/'.$recipe['recipe_id']);
     $this->assertEquals(200, $response->getStatusCode());
   }
 

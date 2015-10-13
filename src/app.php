@@ -15,7 +15,7 @@ $app->register(new HttpCacheServiceProvider());
 $app->register(new MonologServiceProvider(), array(
     'monolog.logfile' => __DIR__.'/../resources/log/app.log',
     'monolog.name'    => 'app',
-    'monolog.level'   => 300 // = Logger::WARNING
+    'monolog.level'   => 100 // = Logger::DEBUG
 ));
 
 // this picks up $app['db.options'] from config
