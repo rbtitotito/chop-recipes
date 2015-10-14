@@ -9,6 +9,13 @@ forthcoming Chop-Shopper front end.
 
 # Requirements
 
+Currently running on PHP version 5.6 or greater.  Should be able to get it running on earlier versions of PHP with some modifications to dependencies.
+
+Set database environment variable DATABASE_URL for db connection string to parse:
+```sh
+$ export DATABASE_URL=postgres://chop_shop:chopping@localhost:<port>
+```
+
 # Installation
 
 Let composer manage dependencies
