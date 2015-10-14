@@ -1,0 +1,128 @@
+swagger: '2.0'
+info:
+  description: >
+    This is a Recipe Store API.  
+    For use with ChopShopper Recipe and Shopping List App
+  version: 0.0.0
+  title: Chop-Recipes API
+  contact:
+    name: Rob Brown <rbtitotito@gmail.com>
+schemes:
+  - http
+host: warm-ocean-8290.herokuapp.com
+paths:
+  /recipes:
+    get:
+      summary: List all Recipes
+      tags:
+        - Recipe
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Recipe'
+        '404':
+          description: No Recipes Found
+    post:
+      summary: Add new Recipe
+      tags:
+        - Recipe
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: Recipe object that needs to be added to collection
+          schema:
+            $ref: '#/definitions/Recipe'
+      responses:
+        '201':
+          description: Recipe created successfuly
+        '405':
+          description: Invalid input
+  /recipes/{recipeId}:
+    get:
+      tags:
+        - Recipe
+      summary: Find recipe by ID
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: recipeId
+          description: ID of recipe to be fetched
+          required: true
+          type: integer
+      responses:
+        '200':
+          description: success
+          schema:
+            $ref: '#/definitions/Recipe'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Recipe not found
+    put:
+      tags:
+        - Recipe
+      summary: Update existing Recipe
+      parameters:
+        - in: path
+          name: recipeId
+          description: ID of Recipe to be fetched
+      responses:
+        '200':
+          description: Recipe updated successfully
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Recipe not found
+        '405':
+          description: Validation exceptoin
+        
+      
+definitions:
+  Recipe:
+    type: object
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+      steps:
+        type: array
+        items:
+          $ref: '#/definitions/RecipeStep'
+  RecipeStep:
+    type: object
+    properties:
+      id:
+        type: integer
+      directions:
+        type: string
+      step_ingredients:
+        type: array
+        items:
+          $ref: '#/definitions/RecipeStepIngredient'
+  RecipeStepIngredient:
+    type: object
+    properties:
+      id:
+        type: integer
+      ingredient:
+        $ref: '#/definitions/Ingredient'
+  Ingredient:
+    type: object
+    properties:
+      name:
+        type: string
