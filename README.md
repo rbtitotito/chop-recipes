@@ -91,6 +91,7 @@ Example Recipe:
 * Return Rel links for next actions
 * Move Controller logic into Classes
 * Fix Travis CI Builds (Mock Objects in Order)
+* Build Ingredient list for entire Recipe based on Ingredient Steps
 * Unit Tests
 * MongoDB seems like a nicer choice for this dataset
 * Modified by
