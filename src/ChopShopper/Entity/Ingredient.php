@@ -7,7 +7,8 @@ namespace ChopShopper\Entity;
  * Ingredient used in recipe.
  * @Entity(repositoryClass="ChopShopper\Entity\IngredientRepository")
  */
- class Ingredient {
+class Ingredient
+{
 
    /**
     * @var integer
@@ -58,5 +59,13 @@ namespace ChopShopper\Entity;
     public function getName()
     {
         return $this->name;
+    }
+
+    public function toArray()
+    {
+        $ret = array();
+        $ret['name'] = $this->getName();
+
+        return $ret;
     }
 }

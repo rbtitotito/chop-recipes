@@ -26,6 +26,7 @@ $step->setPrimaryKey(array('id'));
 $step->addForeignKeyConstraint($recipe, array('recipe_id'), array('id'));
 
 $step_item = $schema->createTable('recipe_step_ingredients');
+$step_item->addColumn('id', 'integer', array('autoincrement' => true));
 $step_item->addColumn('recipe_step_id', 'integer', array('unsigned' => true));
 $step_item->addColumn('ingredient_id', 'integer', array('unsigned' => true));
 $step_item->addColumn('qty', 'decimal', array('precision'=>10,'scale'=>2));

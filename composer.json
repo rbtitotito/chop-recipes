@@ -5,8 +5,6 @@
     "monolog/monolog": "~1.7",
     "twig/twig": "^1.19",
     "symfony/twig-bridge": "^2.7",
-    "guzzlehttp/guzzle": "^6.1",
-    "rebangm/silex-guzzlehttp-provider": "^1.2",
     "herrera-io/silex-pdo": "^1.2",
     "pimple/pimple": "~1.0",
     "doctrine/orm": "~2.3",
@@ -14,12 +12,14 @@
     "symfony/config"        : "~2.7",
     "symfony/console"       : "~2.7",
     "symfony/finder"        : "~2.2",
-    "twitter/bootstrap"     : "2.3.2",
     "dflydev/doctrine-orm-service-provider": "~1.0"
   },
   "require-dev": {
     "heroku/heroku-buildpack-php": "*",
-    "phpunit/phpunit": "5.0.*"
+    "phpunit/phpunit": "5.0.*",
+    "guzzlehttp/guzzle": "^6.1",
+    "rebangm/silex-guzzlehttp-provider": "^1.2",
+    "squizlabs/php_codesniffer": "2.*"
   },
   "autoload": {
     "psr-4": {"ChopShopper\\Entity\\": "src/ChopShopper/Entity"}

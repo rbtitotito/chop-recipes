@@ -10,4 +10,8 @@ namespace ChopShopper\Entity;
  */
 class IngredientRepository extends \Doctrine\ORM\EntityRepository
 {
+    public function findIngredientByName($name)
+    {
+        return $this->_em->findOneBy(array('name' => $name));
+    }
 }

@@ -12,7 +12,8 @@ use \Doctrine\Common\Collections\ArrayCollection;
  * @Entity(repositoryClass="ChopShopper\Entity\RecipeStepRepository")
  * @Table(name="recipe_step")
  */
- class RecipeStep {
+class RecipeStep
+{
 
    /**
     * @var id
@@ -46,9 +47,9 @@ use \Doctrine\Common\Collections\ArrayCollection;
      **/
     private $step_ingredients;
 
-    public function __construct()
+    public function __construct($template = null)
     {
-      $this->step_ingredients = new ArrayCollection();
+        $this->step_ingredients = new ArrayCollection();
     }
 
 
@@ -63,27 +64,27 @@ use \Doctrine\Common\Collections\ArrayCollection;
     }
 
     /**
-     * Set direction
+     * Set directions
      *
-     * @param string $direction
+     * @param string $directions
      *
      * @return RecipeStep
      */
-    public function setDirection($direction)
+    public function setDirections($directions)
     {
-        $this->direction = $direction;
+        $this->directions = $directions;
 
         return $this;
     }
 
     /**
-     * Get direction
+     * Get directions
      *
      * @return string
      */
-    public function getDirection()
+    public function getDirections()
     {
-        return $this->direction;
+        return $this->directions;
     }
 
     /**
@@ -142,5 +143,21 @@ use \Doctrine\Common\Collections\ArrayCollection;
     public function getStepIngredients()
     {
         return $this->step_ingredients;
+    }
+
+    public function toArray()
+    {
+        $ret = array();
+        $ret['directions'] = $this->directions;
+
+        foreach ($this->getStepIngredients() as $step_ingredient) {
+            if (!isset($ret['step_ingredients'])) {
+                $ret['step_ingredients'] = array();
+            }
+
+            $ret['step_ingredients'] = $step_ingredient->toArray();
+        }
+
+        return $ret;
     }
 }

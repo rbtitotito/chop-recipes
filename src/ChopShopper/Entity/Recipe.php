@@ -13,7 +13,8 @@ use \Doctrine\Common\Collections\ArrayCollection;
  *
  * @Entity(repositoryClass="ChopShopper\Entity\RecipeRepository")
  */
- class Recipe {
+class Recipe
+{
 
    /**
     * @var integer
@@ -48,7 +49,7 @@ use \Doctrine\Common\Collections\ArrayCollection;
 
     public function __construct()
     {
-      $this->steps = new ArrayCollection();
+        $this->steps = new ArrayCollection();
     }
 
     /**
@@ -106,8 +107,8 @@ use \Doctrine\Common\Collections\ArrayCollection;
      */
     public function addStep(\ChopShopper\Entity\RecipeStep $step)
     {
+        $step->setRecipe($this);
         $this->steps[] = $step;
-
         return $this;
     }
 
@@ -119,6 +120,25 @@ use \Doctrine\Common\Collections\ArrayCollection;
     public function removeStep(\ChopShopper\Entity\RecipeStep $step)
     {
         $this->steps->removeElement($step);
+    }
+
+    public function setSteps($steps)
+    {
+        foreach ($steps as $step) {
+            $recipe_step = new \ChopShopper\Entity\RecipeStep();
+
+            if (isset($step['directions'])) {
+                $recipe_step->setDirections($step['directions']);
+            }
+
+            if (isset($step['step_ingredients'])) {
+                $recipe_step->setStepIngredients($step['step_ingredients']);
+            }
+
+            $recipe_step->setRecipe($this);
+            $this->addStep($recipe_step);
+        }
+        return $this;
     }
 
     /**
@@ -169,10 +189,18 @@ use \Doctrine\Common\Collections\ArrayCollection;
         $ret['recipe_id'] = $this->id;
         $ret['name'] = $this->name;
 
+        foreach ($this->getSteps() as $step) {
+            if (!isset($ret['steps'])) {
+                $ret['steps'] = array();
+            }
+            
+            $ret['steps'][] = $step->toArray();
+        }
+
         if ($this->deleted) {
             $ret['deleted'] = $this->deleted;
         }
-        
+
         return $ret;
     }
 }

@@ -10,7 +10,8 @@ namespace ChopShopper\Entity;
  * @Entity(repositoryClass="ChopShopper\Entity\RecipeStepIngredientRepository")
  * @Table(name="recipe_step_ingredients")
  */
- class RecipeStepIngredient {
+class RecipeStepIngredient
+{
 
    /**
     * @Id @Column(type="integer")
@@ -120,5 +121,14 @@ namespace ChopShopper\Entity;
     public function getRecipeStep()
     {
         return $this->recipeStep;
+    }
+
+    public function toArray()
+    {
+        $ret = array();
+        $ret['qty'] = $this->getQty();
+        $ret['ingredient'] = $this->getIngredient()->toArray();
+
+        return $ret;
     }
 }

@@ -69,9 +69,43 @@ class RecipesTest extends PHPUnit_Framework_TestCase
     $params['steps'] = [
             [
                 'directions' => 'Mix the eggs and the bacon',
+                'step_ingredients' =>
+                [
+                    [
+                        'ingredient' =>
+                        [
+                            'name' => 'eggs'
+                        ],
+                        'qty' => 2
+                    ],
+                    [
+                        'ingredient' =>
+                        [
+                            'name' =>  'bacon'
+                        ],
+                        'qty' => 4
+                    ]
+                ]
             ],
             [
-                'directions' => 'Mix the butter with the buiscit',
+                'directions' => 'Mix the butter with the biscuit',
+                'step_ingredients' =>
+                [
+                    [
+                        'ingredient' =>
+                        [
+                            'name' => 'butter'
+                        ],
+                        'qty' => 1
+                    ],
+                    [
+                        'ingredient' =>
+                        [
+                            'name' =>  'biscuit'
+                        ],
+                        'qty' => 1
+                    ]
+                ]
             ],
         ];
     $response = $this->client->post($this->base_uri, [
