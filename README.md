@@ -25,14 +25,19 @@ $ git clone git@github.com:rbtitotito/chop-recipes.git # or clone your own fork
 $ # create a postgres database with credentials matching environment variable
 $ # DATABASE_URL.  
 $ # Example:  export DATABASE_URL=postgres://chop_shop:chopping@localhost:<port>
+$
 $ cd chop-recipes
 $ composer install
-$ -- first time only
+$
+$ # first time only - load database
 $ console doctrine:database:create
 $ console doctrine:schema:load
 $ phpunit
 ```
 ## Heroku ready
+
+Todo - add prepopulated database
+
 ```
 $ heroku create
 $ git push heroku master
@@ -40,6 +45,45 @@ $ heroku open
 ```
 
 # API Documentation
+
+Example Recipe:
+
+```json
+{
+    'name': 'Call my Doctor',
+    'steps':
+    [   
+        [
+            'directions': 'Mix the eggs and the bacon',
+            'step_ingredients':
+            [
+                [
+                    'ingredient': [ 'name': 'egg'],
+                    'qty': 2
+                ],
+                [
+                    'ingredient': [ 'name': 'bacon'],
+                    'qty': 4
+                ]
+            ]
+        ],
+        [
+            'directions': 'Butter your biscuit',
+            'step_ingredients':
+            [
+                [
+                    'ingredient': [ 'name': 'biscuit'],
+                    'qty': 1
+                ],
+                [
+                    'ingredient': [ 'name': 'butter'],
+                    'qty': 1
+                ]
+            ]
+        ]
+    ]
+}
+```
 
 - TODO
 
