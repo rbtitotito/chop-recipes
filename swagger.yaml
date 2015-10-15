@@ -39,15 +39,39 @@ paths:
         - application/json
       parameters:
         - in: body
-          name: body
+          name: recipe
           description: Recipe object that needs to be added to collection
           schema:
             $ref: '#/definitions/Recipe'
       responses:
         '201':
           description: Recipe created successfuly
+        '404':
+          description: Recipe not found
         '405':
-          description: Invalid input
+          description: Validation exception
+    put:
+      summary: Update existing Recipe
+      tags:
+        - Recipe
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: recipe
+          description: Recipe to update
+          schema:
+            $ref: '#/definitions/Recipe'
+          required: true
+      responses:
+        '200':
+          description: Recipe updated successfully
+        '404':
+          description: Recipe not found
+        '405':
+          description: Validation exception
   /recipes/{recipeId}:
     get:
       tags:
@@ -69,10 +93,10 @@ paths:
           schema:
             $ref: '#/definitions/Recipe'
         '400':
-          description: Invalid ID supplied
+          description: Invalid recipeId supplied
         '404':
           description: Recipe not found
-    put:
+    post:
       tags:
         - Recipe
       summary: Update existing Recipe
@@ -80,6 +104,13 @@ paths:
         - in: path
           name: recipeId
           description: ID of Recipe to be fetched
+          required: true
+          type: integer
+        - in: body
+          name: recipe
+          description: The Recipe JSON you want to post
+          schema:
+            $ref: '#/definitions/Recipe'
       responses:
         '200':
           description: Recipe updated successfully
@@ -88,9 +119,23 @@ paths:
         '404':
           description: Recipe not found
         '405':
-          description: Validation exceptoin
-        
-      
+          description: Validation exception
+    delete:
+      tags:
+        - Recipe
+      summary: Delete existing Recipe
+      parameters:
+        - in: path
+          name: recipeId
+          description: ID of Recipe to delete
+          required: true
+          type: integer
+      responses:
+        '200':
+          description: Recipe deleted successfully
+        '400':
+          description: Invalid recipeId supplied
+    
 definitions:
   Recipe:
     type: object
