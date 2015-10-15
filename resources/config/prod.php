@@ -15,7 +15,7 @@ $app['http_cache.cache_dir'] = $app['cache.path'] . '/http';
  **/
 function parse_db_url() {
   $ret = array();
-  $parsed_url = parse_url(getenv("DATABASE_URL")));
+  $parsed_url = parse_url(getenv("DATABASE_URL"));
   $ret['dbname'] = (isset($parsed_url['path'])) ? substr($parsed_url['path'], 1) : 'chop_shop';
   
   if (isset($parsed_url['pass'])) {
