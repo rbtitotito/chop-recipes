@@ -131,4 +131,13 @@ class RecipeStepIngredient
 
         return $ret;
     }
+
+    public function loadFromObj($ob)
+    {
+        $this->qty = $ob->qty;
+        $ingredient = new Ingredient();
+        $this->ingredient = $ingredient->loadFromObj($ob->ingredient);
+
+        return $this;
+    }
 }

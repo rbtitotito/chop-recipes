@@ -61,11 +61,27 @@ class Ingredient
         return $this->name;
     }
 
+    /**
+     * Return array representation of obj
+     * @return array
+     */
     public function toArray()
     {
         $ret = array();
         $ret['name'] = $this->getName();
 
         return $ret;
+    }
+
+    /**
+     * @param $ob
+     *
+     * @return $this
+     */
+    public function loadFromObj($ob)
+    {
+        $this->name = $ob->name;
+
+        return $this;
     }
 }

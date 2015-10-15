@@ -10,7 +10,8 @@
     "symfony/config"        : "~2.7",
     "symfony/console"       : "~2.7",
     "symfony/finder"        : "~2.2",
-    "dflydev/doctrine-orm-service-provider": "~1.0"
+    "dflydev/doctrine-orm-service-provider": "~1.0",
+    "kumatch/silex-json-body-provider": "^0.1.0"
   },
   "require-dev": {
     "heroku/heroku-buildpack-php": "*",

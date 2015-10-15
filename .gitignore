@@ -1,8 +1,7 @@
 vendor/
 .env
 composer.phar
-*.example
-*.default
+
 *~
 *.swp
 # Cache and logs
@@ -10,6 +9,8 @@ composer.phar
 /resources/log/*
 !resources/cache/.gitkeep
 !resources/log/.gitkeep
+
+/resources/config/database.php
 
 # Mac Stuff
 .DS_Store

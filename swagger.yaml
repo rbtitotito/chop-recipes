@@ -1,7 +1,7 @@
 swagger: '2.0'
 info:
   description: >
-    This is a Recipe Store API.  
+    This is a Recipe Store API.
     For use with ChopShopper Recipe and Shopping List App
   version: 0.0.0
   title: Chop-Recipes API
@@ -135,7 +135,22 @@ paths:
           description: Recipe deleted successfully
         '400':
           description: Invalid recipeId supplied
-    
+  /recipes/search/{name}:
+    get:
+      tags:
+        - Recipe
+      summary: Search for recipe by name
+      description: must be exact match for now
+      parameters:
+        - in: path
+          name: name
+          required: true
+          type: string
+      responses:
+        "200":
+          description: Recipe found
+        "404":
+          description: Recipe not found
 definitions:
   Recipe:
     type: object

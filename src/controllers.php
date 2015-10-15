@@ -15,7 +15,7 @@ use Symfony\Component\HttpFoundation\Response;
 /**
  * Get Recipes List
  */
-$app->get('/', function () use ($app) {
+$app->get('/recipes/', function () use ($app) {
 
     $app['monolog']->addDebug('Logging output / Get Recipes');
     $em = $app['orm.em'];
@@ -34,76 +34,19 @@ $app->get('/', function () use ($app) {
 /**
  * Create New Recipe
  */
-$app->post('/', function (Silex\Application $app, Request $request) {
+$app->post('/recipes/', function (Silex\Application $app, Request $request) {
 
     $app['monolog']->addDebug('logging output / Post Recipe');
-    $name = $request->get('name');
-    $app['monolog']->addDebug('name: ' . $name);
+    $body = $request->getContent();
+    $recipe_obj = json_decode($body);
+    $em = $app['orm.em'];
+    $recipe = $em->getRepository('ChopShopper\Entity\Recipe')
+        ->createRecipe($recipe_obj);
 
-    if ($name === null or strlen($name) < 3) {
-        $app->abort('403', 'Whoops');
-    }
-
-    $recipe = new Recipe();
-    $recipe->setName($name);
-    $steps = $request->get('steps');
-
-  // this is just crying out for refactor ... and MongoDB
     $em = $app['orm.em'];
     $em->persist($recipe);
-    if ($steps) {
-        $app['monolog']->addDebug('steps: '.var_export($steps, true));
-
-        foreach ($steps as $step) {
-            $recipe_step = new \ChopShopper\Entity\RecipeStep();
-
-            if (isset($step['directions'])) {
-                $recipe_step->setDirections($step['directions']);
-            }
-
-            if (isset($step['step_ingredients'])) {
-                foreach ($step['step_ingredients'] as $step_ingredient) {
-                    $recipe_step_ingredient = new \ChopShopper\Entity\RecipeStepIngredient();
-
-                    if (isset($step_ingredient['ingredient'])) {
-                        $ingredient = $em->getRepository('ChopShopper\Entity\Ingredient')
-                                    ->findOneBy(array('name' => $step_ingredient['ingredient']['name']));
-
-                        if (!$ingredient) {
-                            $ingredient = new \ChopShopper\Entity\Ingredient();
-                            $ingredient->setName($step_ingredient['ingredient']['name']);
-                            $em->persist($ingredient);
-                        }
-
-                        $recipe_step_ingredient->setIngredient($ingredient);
-                    }
-
-                    if (isset($step_ingredient['qty'])) {
-                        $recipe_step_ingredient->setQty($step_ingredient['qty']);
-                    }
-
-                    $recipe_step->addStepIngredient($recipe_step_ingredient);
-                }
-
-            }
-
-            $recipe->addStep($recipe_step);
-            $em->persist($recipe_step);
-
-        }
-
-        foreach ($recipe->getSteps() as $step) {
-            foreach ($step->getStepIngredients() as $step_ingredient) {
-                $step_ingredient->setRecipeStep($step);
-                $em->persist($step_ingredient);
-            }
-
-            $em->persist($step);
-        }
-
-    }
-
     $em->flush();
+
     $app['monolog']->addDebug('logging output end / Post Recipe');
 
     return $app->json($recipe->toArray(), 201);
@@ -112,7 +55,7 @@ $app->post('/', function (Silex\Application $app, Request $request) {
 /**
  * Get recipe details by id
  */
-$app->get('/{recipe_id}', function (Silex\Application $app, $recipe_id) {
+$app->get('/recipes/{recipe_id}', function (Silex\Application $app, $recipe_id) {
 
     $app['monolog']->addDebug('logging output / Get Recipe');
     $em = $app['orm.em'];
@@ -131,7 +74,7 @@ $app->get('/{recipe_id}', function (Silex\Application $app, $recipe_id) {
  * Search by name
  * @todo fuzzy search with result list of possbilities and weight
  */
-$app->get('/search/{name}', function (Silex\Application $app, $name) {
+$app->get('/recipes/search/{name}', function (Silex\Application $app, $name) {
 
     $app['monolog']->addDebug('logging output / Search by Recipe');
     $app['monolog']->addDebug('name: '.$name);
@@ -151,7 +94,7 @@ $app->get('/search/{name}', function (Silex\Application $app, $name) {
  * Delete recipe
  * @todo authorization
  */
-$app->delete('/{recipe_id}', function (Silex\Application $app, $recipe_id) {
+$app->delete('/recipes/{recipe_id}', function (Silex\Application $app, $recipe_id) {
 
     $app['monolog']->addDebug('logging output / Delete Recipe');
     $em = $app['orm.em'];
@@ -193,7 +136,10 @@ $app->error(function (\Exception $e, $code) use ($app) {
 
     switch ($code) {
         case 404:
-            $message = 'The requested page could not be found.';
+            $message = 'The requested resource code not be found';
+            break;
+        case 405:
+            $message = 'Validation exception';
             break;
         default:
             $message = 'We are sorry, but something went terribly wrong.';

@@ -160,4 +160,24 @@ class RecipeStep
 
         return $ret;
     }
+
+    /**
+     * @param $ob
+     *
+     * @return $this
+     */
+    public function loadFromObj($ob)
+    {
+        $this->directions = $ob->directions;
+
+        $step_ingredients = (isset($ob->step_ingredients)) ? $ob->step_ingredients : array();
+
+        foreach ($step_ingredients as $step_ingredient)
+        {
+            $recipe_step_ingredient = new RecipeStepIngredient();
+            $this->addStepIngredient($recipe_step_ingredient->loadFromObj($step_ingredient));
+        }
+
+        return $this;
+    }
 }
